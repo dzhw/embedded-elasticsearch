@@ -1,21 +1,10 @@
-buildscript {
-    repositories { mavenCentral() }
-    dependencies {
-        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
-    }
-}
-
-plugins {
-    id 'com.bmuschko.nexus' version '2.3.1'
-}
-
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'io.codearte.nexus-staging'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 
-project.group = 'pl.allegro.tech'
-project.version = scmVersion.version
-jar.baseName = 'embedded-elasticsearch'
+group = "pl.allegro.tech"
+version = "2.11.3"
 
 dependencies {
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
@@ -32,36 +21,36 @@ dependencies {
     testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.3.0'
 }
 
-nexusStaging {
-    packageGroup = 'pl.allegro'
-    numberOfRetries = 15
-    delayBetweenRetriesInMillis = 5000
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier = 'sources'
 }
 
-modifyPom {
-    project {
-        name 'embedded-elasticsearch'
-        description 'Tool that ease up creation of integration tests with Elasticsearch'
-        url 'https://github.com/allegro/embedded-elasticsearch'
-        inceptionYear '2016'
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier = 'javadoc'
+}
 
-        scm {
-            url 'https://github.com/allegro/embedded-elasticsearch'
-            connection 'scm:git@github.com:allegro/embedded-elasticsearch.git'
-            developerConnection 'scm:git@github.com:allegro/embedded-elasticsearch.git'
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'embedded-elasticsearch'
+            from components.java
+            // artifact sourcesJar
+            // artifact javadocJar
         }
-
-        licenses {
-            license {
-                name 'The Apache Software License, Version 2.0'
-                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-            }
-        }
-
-        developers {
-            developer {
-                id 'yukon'
-                name 'YUKON'
+    }
+    repositories {
+        maven {
+            url = "https://maven.pkg.github.com/dzhw/embedded-elasticsearch"
+            credentials {
+                username System.getenv("GITHUB_USERNAME")
+                password System.getenv("GITHUB_TOKEN")
             }
         }
     }

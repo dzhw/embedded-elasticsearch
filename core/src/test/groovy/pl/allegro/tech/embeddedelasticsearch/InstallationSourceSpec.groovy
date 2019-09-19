@@ -16,7 +16,7 @@ class InstallationSourceSpec extends Specification {
             version        | url
             "5.0.0-alpha1" | "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.0.0-alpha1.zip"
             "6.7.1"        | "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.7.1.zip"
-            "7.0.0"        | "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.0.0-windows-x86_64.zip"
+            "7.0.0"        | "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.0.0-linux-x86_64.tar.gz"
     }
 
     def "should extract properly version from normal url"() {
